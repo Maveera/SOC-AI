@@ -103,6 +103,10 @@
       margin-bottom: 25px;
     }
 
+    .grid > .input-group {
+      min-width: 0;
+    }
+
     .input-group {
       display: flex;
       flex-direction: column;
@@ -181,14 +185,37 @@
       position: relative;
       width: 100%;
       display: flex;
-      gap: 5px;
-      align-items: center;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
     }
 
     .ti-input-box {
       position: relative;
-      flex: 1;
       width: 100%;
+      min-width: 0;
+    }
+
+    /* Provider + Open: own row so narrow grid cells (laptop 4-col) don’t clip the select */
+    .ti-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .ti-actions select {
+      flex: 1 1 160px;
+      min-width: 0;
+      width: auto;
+      max-width: 100%;
+    }
+
+    .ti-actions .btn-open {
+      flex: 0 0 auto;
+      min-width: unset;
     }
 
     #tiKey {
@@ -254,11 +281,11 @@
       border: 1px solid var(--primary);
       color: var(--primary);
       font-size: 12px;
-      padding: 10px 12px;
+      padding: 10px 14px;
       border-radius: 10px;
       font-weight: 800;
       cursor: pointer;
-      min-width: 120px;
+      min-width: 4.5rem;
       display: none;
       align-items: center;
       justify-content: center;
@@ -331,6 +358,69 @@
       display: none;
     }
 
+    .report-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .segment-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 4px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    body.light-theme .segment-control {
+      background: #e2e8f0;
+    }
+
+    .seg-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 32px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-gray);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .seg-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    body.light-theme .seg-btn:hover {
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .seg-btn.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    body.light-theme .seg-btn.active {
+      background: #fff;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .report-panel {
+      display: none;
+    }
+
+    .report-panel.is-visible {
+      display: block;
+    }
+
     .report-content {
       background: rgba(0, 0, 0, 0.05);
       border: 1px solid var(--border);
@@ -342,6 +432,252 @@
       line-height: 1.6;
       color: var(--text-main);
       overflow-x: auto;
+    }
+
+    .ir-preview-frame {
+      width: 100%;
+      min-height: 520px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f4f4f4;
+    }
+
+    .email-template-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .email-template-wrap textarea {
+      min-height: 280px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .ir-html-editor {
+      min-height: 220px;
+      margin-top: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+
+    .ir-panel-hint {
+      font-size: 11px;
+      color: var(--text-gray);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    /* SS1 (preview actions) beside SS2 (field triggers) on wide layouts */
+    .ir-fields-actions-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .ir-fields-actions-wrap .ir-fields-panel {
+      flex: 1 1 280px;
+      min-width: 0;
+      margin-bottom: 0;
+    }
+
+    .ir-fields-actions-wrap .ir-preview-toolbar {
+      flex: 0 1 auto;
+      margin-top: 0;
+      align-self: flex-start;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 640px) {
+      .ir-fields-actions-wrap {
+        flex-direction: column;
+      }
+
+      .ir-fields-actions-wrap .ir-preview-toolbar {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+
+    .ir-fields-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ir-field-trigger {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      padding: 12px 14px 14px;
+      background: rgba(0, 0, 0, 0.07);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      font: inherit;
+      color: inherit;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    body.light-theme .ir-field-trigger {
+      background: rgba(0, 0, 0, 0.03);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .ir-field-trigger:hover {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.35);
+      box-shadow: 0 1px 8px rgba(59, 130, 246, 0.12);
+    }
+
+    .ir-field-trigger .ir-field-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      flex-shrink: 0;
+    }
+
+    .ir-field-trigger .ir-field-preview {
+      font-size: 13px;
+      color: var(--text-main);
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      min-width: 0;
+      opacity: 0.95;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .ir-field-trigger .ir-field-preview::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .ir-field-trigger .ir-field-preview::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .ir-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10050;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+    }
+
+    .ir-modal-overlay.is-open {
+      display: flex;
+    }
+
+    .ir-modal {
+      width: 100%;
+      max-width: 560px;
+      max-height: min(86vh, 720px);
+      display: flex;
+      flex-direction: column;
+      background: var(--card-bg, #1e293b);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+    }
+
+    .ir-modal h3 {
+      margin: 0;
+      padding: 18px 20px 12px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ir-modal-body {
+      padding: 16px 20px;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ir-modal-body textarea {
+      width: 100%;
+      min-height: 200px;
+      flex: 1;
+      resize: vertical;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text-main);
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .ir-modal-body input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text-main);
+      font-size: 13px;
+    }
+
+    .ir-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 20px 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .email-template-hint {
+      font-size: 11px;
+      color: var(--text-gray);
+      line-height: 1.5;
+    }
+
+    .email-template-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-secondary {
+      background: #475569;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-secondary:hover {
+      filter: brightness(1.08);
     }
 
     .ti-results {
@@ -683,14 +1019,16 @@
             <span id="editTi" class="edit-link" onclick="unlockKey('tiKey')">Edit</span>
           </div>
 
-          <select id="tiProvider" style="width: 160px;">
-            <option value="abuseipdb">AbuseIPDB</option>
-            <option value="virustotal">VirusTotal</option>
-            <option value="alienvault">AlienVault</option>
-            <option value="providerSite">IT Provider Site</option>
-          </select>
+          <div class="ti-actions">
+            <select id="tiProvider" aria-label="Threat intelligence provider">
+              <option value="abuseipdb">AbuseIPDB</option>
+              <option value="virustotal">VirusTotal</option>
+              <option value="alienvault">AlienVault</option>
+              <option value="providerSite">IT Provider Site</option>
+            </select>
 
-          <button class="btn-open" id="tiOpenBtn" onclick="openTIProviderSite()">Open</button>
+            <button class="btn-open" id="tiOpenBtn" onclick="openTIProviderSite()">Open</button>
+          </div>
         </div>
       </div>
     </div>
@@ -745,13 +1083,111 @@
     </div>
 
     <div class="report-area" id="reportSection">
-      <div class="report-content" id="reportContent"></div>
-      <button class="btn btn-main" style="background:#475569" id="copyBtn" onclick="copyReport()">📋 Copy
-        Report</button>
+      <div class="report-toolbar">
+        <div class="segment-control" role="tablist" aria-label="Output view">
+          <button type="button" class="seg-btn active" data-view="analysis" onclick="setReportView('analysis')"
+            title="Analysis (text)" aria-selected="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+          <button type="button" class="seg-btn" data-view="ir" onclick="setReportView('ir')" title="IR template (HTML)"
+            aria-selected="false" style="font-family: ui-monospace, monospace; font-size: 12px; font-weight: 800;">&lt;/&gt;</button>
+          <button type="button" class="seg-btn" data-view="email" onclick="setReportView('email')"
+            title="Email template (placeholders)" aria-selected="false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              aria-hidden="true">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="reportPanelAnalysis" class="report-panel is-visible">
+        <div class="report-content" id="reportContent"></div>
+      </div>
+
+      <div id="reportPanelIr" class="report-panel">
+        <p class="ir-panel-hint"><strong>Rule name</strong> matches the alert title automatically — no separate field.
+          Click each row below to enter <strong>Incident ticket</strong>, <strong>Severity</strong>, <strong>Details</strong>,
+          <strong>Observation</strong>, or <strong>Recommendation</strong>, then click <strong>Update preview</strong> to push
+          values into the IR/email (preview cells are read-only). Use the HTML box for advanced edits.</p>
+        <div class="ir-fields-actions-wrap">
+          <div class="ir-fields-panel" role="group" aria-label="IR field editors">
+            <button type="button" class="ir-field-trigger" data-ir-field="ticket" onclick="openIrFieldModal('ticket')">
+              <span class="ir-field-label">Incident ticket</span>
+              <span class="ir-field-preview" id="irPreviewTicket">—</span>
+            </button>
+            <button type="button" class="ir-field-trigger" data-ir-field="severity" onclick="openIrFieldModal('severity')">
+              <span class="ir-field-label">Severity</span>
+              <span class="ir-field-preview" id="irPreviewSeverity">—</span>
+            </button>
+            <button type="button" class="ir-field-trigger" data-ir-field="details" onclick="openIrFieldModal('details')">
+              <span class="ir-field-label">Details</span>
+              <span class="ir-field-preview" id="irPreviewDetails">—</span>
+            </button>
+            <button type="button" class="ir-field-trigger" data-ir-field="observation" onclick="openIrFieldModal('observation')">
+              <span class="ir-field-label">Observation</span>
+              <span class="ir-field-preview" id="irPreviewObservation">—</span>
+            </button>
+            <button type="button" class="ir-field-trigger" data-ir-field="recommendation" onclick="openIrFieldModal('recommendation')">
+              <span class="ir-field-label">Recommendation</span>
+              <span class="ir-field-preview" id="irPreviewRecommendation">—</span>
+            </button>
+          </div>
+          <div class="email-template-actions ir-preview-toolbar" aria-label="IR preview actions">
+            <button type="button" class="btn-secondary" onclick="applyIrPreviewFromEditor()">Update preview</button>
+            <button type="button" class="btn-secondary" onclick="syncPreviewToSource()" style="background:#0f766e">Sync
+              preview → source</button>
+            <button type="button" class="btn-secondary" onclick="reloadIrFromAnalysis()" style="background:#334155">Reload
+              from analysis</button>
+          </div>
+        </div>
+        <iframe class="ir-preview-frame" id="irTemplateFrame" title="SNS IR template preview"
+          sandbox="allow-same-origin"></iframe>
+        <textarea id="irHtmlSource" class="ir-html-editor" spellcheck="false"
+          placeholder="IR email HTML (editable; synced with preview)"></textarea>
+      </div>
+
+      <div id="reportPanelEmail" class="report-panel">
+        <div class="email-template-wrap">
+          <p class="email-template-hint">Same HTML as the IR tab (read-only). Edit IR fields via the clickable rows in the IR
+            tab, then <strong>Update preview</strong>; or edit the HTML source below the IR preview. This panel updates when IR
+            changes.</p>
+          <div class="email-template-actions">
+            <button type="button" class="btn-secondary" onclick="applyEmailTemplateMerge()">Refresh from analysis</button>
+            <button type="button" class="btn-secondary" onclick="saveEmailTemplateDraft()"
+              style="background:#334155">Save draft</button>
+          </div>
+          <textarea id="emailTemplateEditor" spellcheck="false" readonly placeholder="Same HTML as IR — appears after analysis"
+            style="opacity:0.95"></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-main" style="background:#475569; margin-top:12px" id="copyBtn" onclick="copyReport()">📋 Copy
+        current view</button>
     </div>
 
     <footer>© 2026 All Rights Reserved | <a href="https://maveera.tech" target="_blank"
         style="color:var(--primary); text-decoration:none">Maveera</a></footer>
+  </div>
+
+  <!-- IR field modal (ticket, severity, details, observation, recommendation) -->
+  <div id="irFieldModalOverlay" class="ir-modal-overlay" aria-hidden="true" role="presentation" onclick="if(event.target===this)closeIrFieldModal()">
+    <div class="ir-modal" role="dialog" aria-modal="true" aria-labelledby="irFieldModalTitle" onclick="event.stopPropagation()">
+      <h3 id="irFieldModalTitle">Edit field</h3>
+      <div class="ir-modal-body">
+        <input type="text" id="irFieldModalSingle" autocomplete="off" style="display:none;" />
+        <textarea id="irFieldModalTextarea" spellcheck="true" style="display:none;"></textarea>
+      </div>
+      <div class="ir-modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeIrFieldModal()">Cancel</button>
+        <button type="button" class="btn-secondary" onclick="commitIrFieldModal()" style="background:#0f766e">OK</button>
+      </div>
+    </div>
   </div>
 
   <!-- FLOATING SOC BOT -->
@@ -788,6 +1224,179 @@
     let lastAnalysisReport = "";
     let lastMaskedLogs = "";
     let lastSelectedRule = "";
+
+    /** Staging values for IR fields (applied on Update preview); Rule name uses lastSelectedRule only */
+    let irOverlayFields = { ticket: "", severity: "", details: "", observation: "", recommendation: "" };
+    let irModalActiveField = null;
+
+    const IR_FIELD_MODAL_TITLES = {
+      ticket: "Incident ticket",
+      severity: "Severity",
+      details: "Details",
+      observation: "Observation",
+      recommendation: "Recommendation"
+    };
+
+    const EMAIL_TEMPLATE_STORAGE_KEY = "soc_email_template";
+    const DEFAULT_EMAIL_TEMPLATE = "";
+
+    const EMBEDDED_IR_TEMPLATE_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SNS SOC Incident Response</title>
+  <style type="text/css">
+    /* 1.5 line spacing inside value cells; extra air between wrapped lines */
+    #ir-field-rule, #ir-field-severity, #ir-field-details, #ir-field-observation, #ir-field-recommendation {
+      line-height: 1.5 !important;
+      font-size: 12px;
+    }
+    #ir-field-rule p, #ir-field-severity p, #ir-field-details p, #ir-field-observation p, #ir-field-recommendation p {
+      margin: 0 0 0.75em 0;
+      line-height: 1.5;
+    }
+    #ir-field-rule p:last-child, #ir-field-severity p:last-child, #ir-field-details p:last-child,
+    #ir-field-observation p:last-child, #ir-field-recommendation p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f4f4; font-family:Arial, sans-serif; font-size:12px;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f4f4; padding:30px 0;">
+    <tr>
+      <td align="center">
+
+        <table width="620" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border:1px solid #e0e0e0;">
+
+          <!-- HEADER -->
+          <tr>
+            <td style="background-color:#0f172a; padding:20px 30px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <p style="margin:0; font-size:12px; font-weight:bold; color:#cacccf; font-family:Arial, sans-serif;">Security Operation Center</p>
+                  </td>
+                  <td align="right" valign="middle">
+                    <span style="font-size:12px; color:#dce0e6; font-family:Arial, sans-serif;">CONFIDENTIAL</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- STATUS BAR -->
+          <tr>
+            <td style="background-color:#1e293b; padding:8px 30px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background-color:#ffffff; padding:3px 10px; border-radius:3px;">
+                    <span id="ir-field-ticket" style="font-size:12px; font-weight:bold; color:#000000; font-family:Arial, sans-serif; letter-spacing:1px; text-transform:uppercase;">—</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- BODY -->
+          <tr>
+            <td style="padding:36px 32px 28px;">
+
+              <p style="margin:0 0 10px; font-size:12px; color:#64748b; font-family:Arial, sans-serif;">Hello Team,</p>
+
+              <p style="margin:0 0 24px; font-size:12px; color:#475569; font-family:Arial, sans-serif; line-height:1.5; background-color:#f8fafc; border-left:3px solid #cbd5e1; padding:14px 16px;">
+              We have received an alert titled "<span id="ir-alert-rule">Rule Name</span>"</p>
+
+              <!-- DIVIDER -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                <tr>
+                  <td style="border-top:1px solid #e2e8f0; font-size:0; line-height:0;">&nbsp;</td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 22px; font-size:12px; font-weight:bold; color:#94a3b8; font-family:Arial, sans-serif; letter-spacing:2px; text-transform:uppercase;">Incident Details</p>
+
+              <!-- DETAILS TABLE -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate; border-spacing:0;">
+
+                <tr>
+                  <td width="170" valign="top" style="padding:18px 16px 18px 0; border-top:1px solid #e8eef4;">
+                    <p style="margin:0; padding-top:1px; font-size:12px; font-weight:bold; color:#334155; font-family:Arial, sans-serif;">Rule Name <span style="color:#dc2626;">*</span></p>
+                  </td>
+                  <td valign="top" style="padding:18px 0 18px 10px; border-top:1px solid #e8eef4;">
+                    <div id="ir-field-rule" style="margin:0; font-size:12px; line-height:1.5; color:#1e293b; font-family:Arial, sans-serif; background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; min-height:24px; white-space:pre-wrap; word-break:break-word;">Rule name</div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="170" valign="top" style="padding:18px 16px 18px 0; border-top:1px solid #e8eef4;">
+                    <p style="margin:0; padding-top:1px; font-size:12px; font-weight:bold; color:#334155; font-family:Arial, sans-serif;">Severity <span style="color:#dc2626;">*</span></p>
+                  </td>
+                  <td valign="top" style="padding:18px 0 18px 10px; border-top:1px solid #e8eef4;">
+                    <div id="ir-field-severity" style="margin:0; font-size:12px; line-height:1.5; color:#1e293b; font-family:Arial, sans-serif; background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; min-height:24px; white-space:pre-wrap; word-break:break-word;">High / Medium / Low</div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="170" valign="top" style="padding:18px 16px 18px 0; border-top:1px solid #e8eef4;">
+                    <p style="margin:0; padding-top:1px; font-size:12px; font-weight:bold; color:#334155; font-family:Arial, sans-serif;">Details <span style="color:#dc2626;">*</span></p>
+                  </td>
+                  <td valign="top" style="padding:18px 0 18px 10px; border-top:1px solid #e8eef4;">
+                    <div id="ir-field-details" style="margin:0; font-size:12px; line-height:1.5; color:#1e293b; font-family:Arial, sans-serif; background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px 16px; min-height:100px; white-space:pre-wrap; word-break:break-word;">Details</div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="170" valign="top" style="padding:18px 16px 18px 0; border-top:1px solid #e8eef4;">
+                    <p style="margin:0; padding-top:1px; font-size:12px; font-weight:bold; color:#334155; font-family:Arial, sans-serif;">Observation</p>
+                  </td>
+                  <td valign="top" style="padding:18px 0 18px 10px; border-top:1px solid #e8eef4;">
+                    <div id="ir-field-observation" style="margin:0; font-size:12px; line-height:1.5; color:#1e293b; font-family:Arial, sans-serif; background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px 16px; min-height:120px; white-space:pre-wrap; word-break:break-word;">Observation</div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td width="170" valign="top" style="padding:18px 16px 18px 0; border-top:1px solid #e8eef4;">
+                    <p style="margin:0; padding-top:1px; font-size:12px; font-weight:bold; color:#334155; font-family:Arial, sans-serif;">Recommendation</p>
+                  </td>
+                  <td valign="top" style="padding:18px 0 18px 10px; border-top:1px solid #e8eef4;">
+                    <div id="ir-field-recommendation" style="margin:0; font-size:12px; line-height:1.5; color:#1e293b; font-family:Arial, sans-serif; background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px 16px; min-height:120px; white-space:pre-wrap; word-break:break-word;">Recommendation</div>
+                  </td>
+                </tr>
+
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- SPACER -->
+          <tr><td style="height:32px;"></td></tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td style="background-color:#f8fafc; border-top:1px solid #e2e8f0; padding:20px 32px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <p style="margin:0; font-size:12px; color:#94a3b8; font-family:Arial, sans-serif;">Secure Network Solutions India Pvt Ltd &nbsp;&middot;&nbsp; Security Operations Centre</p>
+                    <p style="margin:3px 0 0; font-size:12px; color:#cbd5e1; font-family:Arial, sans-serif;">This communication is confidential and intended solely for the addressee.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+`;
+
+    let currentReportView = "analysis";
 
     const AI_MODELS = {
       gemini: [
@@ -835,6 +1444,7 @@
       loadKey('tiKey');
       initModelSelector();
       handleTIProviderUI();
+      loadEmailTemplateOnInit();
       bootBotUI();
     };
 
@@ -1398,6 +2008,322 @@ ${question}
       return convertUtcTimestampsTo0530(beforeRaw) + rawBlock + convertUtcTimestampsTo0530(afterRaw);
     }
 
+    function reEscape(s) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function parseAnalysisReport(text) {
+      const sectionLabels = ["Details", "Event Time", "Host Name", "User", "Source IP", "Event IDs", "Authentication Result", "Logon Process", "Observation", "Impact", "Recommended Actions", "RAW Log", "Classification"];
+      const keys = ["details", "eventTime", "hostName", "user", "sourceIp", "eventIds", "authResult", "logonProcess", "observation", "impact", "recommendedActions", "rawLog", "classification"];
+      const out = { details: "", eventTime: "", hostName: "", user: "", sourceIp: "", eventIds: "", authResult: "", logonProcess: "", observation: "", impact: "", recommendedActions: "", rawLog: "", classification: "" };
+      for (let i = 0; i < sectionLabels.length; i++) {
+        const label = sectionLabels[i];
+        const startRe = new RegExp(`(?:^|\\n)\\s*${reEscape(label)}\\s*:\\s*`, "i");
+        const sm = startRe.exec(text);
+        if (!sm) continue;
+        const start = sm.index + sm[0].length;
+        let end = text.length;
+        for (const other of sectionLabels) {
+          if (other.toLowerCase() === label.toLowerCase()) continue;
+          const nextRe = new RegExp(`\\n\\s*${reEscape(other)}\\s*:\\s*`, "i");
+          const nm = nextRe.exec(text.slice(start));
+          if (nm && start + nm.index < end) end = start + nm.index;
+        }
+        out[keys[i]] = text.slice(start, end).trim();
+      }
+      if (!Object.values(out).some(v => v && String(v).trim())) {
+        out.details = (text || "").trim();
+      }
+      return out;
+    }
+
+    /** IR "Details" = one factual block: optional intro under Details: plus all structured lines (Event Time … Logon Process). */
+    function composeIrDetailsFromParsed(parsed) {
+      const stripMeta = (s) => {
+        let t = (s || "").trim();
+        t = t.replace(/^\(?ONLY[^)]*\)\s*/i, "").trim();
+        if (/^Do NOT put Observation/i.test(t) || /^ONLY factual/i.test(t)) return "";
+        return t;
+      };
+      const rows = [
+        ["Event Time", parsed.eventTime],
+        ["Host Name", parsed.hostName],
+        ["User", parsed.user],
+        ["Source IP", parsed.sourceIp],
+        ["Event IDs", parsed.eventIds],
+        ["Authentication Result", parsed.authResult],
+        ["Logon Process", parsed.logonProcess]
+      ];
+      const structured = [];
+      for (const [label, val] of rows) {
+        const v = (val || "").trim();
+        if (v) structured.push(`${label}: ${v}`);
+      }
+      const d0 = stripMeta(parsed.details);
+      const parts = [];
+      if (d0) {
+        const dup = structured.some((line) => line.includes(d0) || d0.includes(line.slice(0, Math.min(40, line.length))));
+        if (!dup) parts.push(d0);
+      }
+      parts.push(...structured);
+      const block = parts.join("\n").trim();
+      return block || (parsed.details || "").trim();
+    }
+
+    function guessSeverityFromText(parsed) {
+      const t = ((parsed.impact || "") + " " + composeIrDetailsFromParsed(parsed)).toLowerCase();
+      if (/\b(critical|severe|high)\b/.test(t)) return "High";
+      if (/\blow\b|\bminimal\b/.test(t)) return "Low";
+      return "Medium";
+    }
+
+    function buildIrPreviewHtml(reportText, ruleName) {
+      const parsed = parseAnalysisReport(reportText);
+      const severity = guessSeverityFromText(parsed);
+      const html = typeof EMBEDDED_IR_TEMPLATE_HTML !== "undefined" ? EMBEDDED_IR_TEMPLATE_HTML : "";
+      if (!html || !html.trim()) throw new Error("IR template missing");
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const set = (id, val) => {
+        const el = doc.getElementById(id);
+        if (el) el.textContent = val ?? "";
+      };
+      set("ir-alert-rule", ruleName);
+      set("ir-field-rule", ruleName);
+      set("ir-field-severity", severity);
+      set("ir-field-details", composeIrDetailsFromParsed(parsed));
+      set("ir-field-observation", parsed.observation || "");
+      set("ir-field-recommendation", parsed.recommendedActions || "");
+      set("ir-field-ticket", "—");
+      return "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+    }
+
+    function syncIrOverlayFromAnalysis(reportText) {
+      const parsed = parseAnalysisReport(reportText);
+      const severity = guessSeverityFromText(parsed);
+      irOverlayFields = {
+        ticket: "",
+        severity,
+        details: composeIrDetailsFromParsed(parsed),
+        observation: parsed.observation || "",
+        recommendation: parsed.recommendedActions || ""
+      };
+    }
+
+    /** Multi-line preview: keeps newlines; wraps in the panel (modal still has full text). */
+    function formatIrFieldPreview(val) {
+      let s = val == null ? "" : String(val);
+      s = s.replace(/\r\n/g, "\n").trim();
+      if (!s) return "— (click to edit)";
+      return s;
+    }
+
+    function refreshIrOverlayPreviews() {
+      const o = irOverlayFields;
+      const set = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = formatIrFieldPreview(val);
+      };
+      set("irPreviewTicket", o.ticket);
+      set("irPreviewSeverity", o.severity);
+      set("irPreviewDetails", o.details);
+      set("irPreviewObservation", o.observation);
+      set("irPreviewRecommendation", o.recommendation);
+      const fulls = [o.ticket, o.severity, o.details, o.observation, o.recommendation];
+      document.querySelectorAll("#reportPanelIr .ir-field-trigger").forEach((btn, i) => {
+        const raw = fulls[i];
+        const t = raw != null && String(raw).trim() ? String(raw).trim() : "";
+        btn.title = t ? (t.length > 800 ? t.slice(0, 800) + "…" : t) : "Click to open editor";
+      });
+    }
+
+    function injectIrOverlayFields(htmlString) {
+      if (!htmlString || !String(htmlString).trim()) return htmlString;
+      const o = irOverlayFields;
+      const rule = (lastSelectedRule || "").trim();
+      const doc = new DOMParser().parseFromString(htmlString, "text/html");
+      const set = (id, val) => {
+        const el = doc.getElementById(id);
+        if (el) el.textContent = val ?? "";
+      };
+      set("ir-field-ticket", (o.ticket || "").trim() || "—");
+      set("ir-field-severity", o.severity || "");
+      set("ir-field-details", o.details || "");
+      set("ir-field-observation", o.observation || "");
+      set("ir-field-recommendation", o.recommendation || "");
+      set("ir-field-rule", rule);
+      set("ir-alert-rule", rule);
+      return "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+    }
+
+    function openIrFieldModal(field) {
+      if (!irOverlayFields.hasOwnProperty(field)) return;
+      irModalActiveField = field;
+      const overlay = document.getElementById("irFieldModalOverlay");
+      const titleEl = document.getElementById("irFieldModalTitle");
+      const ta = document.getElementById("irFieldModalTextarea");
+      const single = document.getElementById("irFieldModalSingle");
+      if (!overlay || !titleEl || !ta || !single) return;
+      titleEl.textContent = IR_FIELD_MODAL_TITLES[field] || field;
+      const cur = irOverlayFields[field] ?? "";
+      const useSingle = field === "ticket" || field === "severity";
+      ta.style.display = useSingle ? "none" : "block";
+      single.style.display = useSingle ? "block" : "none";
+      if (useSingle) {
+        single.value = cur;
+        single.placeholder = field === "severity" ? "e.g. High, Medium, Low" : "e.g. INC-12345";
+        single.onkeydown = function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            commitIrFieldModal();
+          }
+        };
+        setTimeout(() => single.focus(), 30);
+      } else {
+        single.onkeydown = null;
+        ta.value = cur;
+        setTimeout(() => ta.focus(), 30);
+      }
+      overlay.classList.add("is-open");
+      overlay.setAttribute("aria-hidden", "false");
+    }
+
+    function closeIrFieldModal() {
+      const overlay = document.getElementById("irFieldModalOverlay");
+      if (overlay) {
+        overlay.classList.remove("is-open");
+        overlay.setAttribute("aria-hidden", "true");
+      }
+      irModalActiveField = null;
+    }
+
+    function commitIrFieldModal() {
+      if (!irModalActiveField || !irOverlayFields.hasOwnProperty(irModalActiveField)) {
+        closeIrFieldModal();
+        return;
+      }
+      const field = irModalActiveField;
+      const ta = document.getElementById("irFieldModalTextarea");
+      const single = document.getElementById("irFieldModalSingle");
+      let v = "";
+      if (field === "ticket" || field === "severity") {
+        v = (single && single.value) ? single.value : "";
+      } else {
+        v = (ta && ta.value) ? ta.value : "";
+      }
+      irOverlayFields[field] = v;
+      refreshIrOverlayPreviews();
+      closeIrFieldModal();
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      const ov = document.getElementById("irFieldModalOverlay");
+      if (ov && ov.classList.contains("is-open")) {
+        e.preventDefault();
+        closeIrFieldModal();
+      }
+    });
+
+    function pullIframeToTextarea() {
+      const iframe = document.getElementById("irTemplateFrame");
+      const ta = document.getElementById("irHtmlSource");
+      if (!iframe || !ta) return;
+      try {
+        const idoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (idoc && idoc.documentElement) {
+          ta.value = "<!DOCTYPE html>\n" + idoc.documentElement.outerHTML;
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    function syncPreviewToSource() {
+      pullIframeToTextarea();
+      syncIrToEmail();
+    }
+
+    function syncIrToEmail() {
+      const ta = document.getElementById("irHtmlSource");
+      const ed = document.getElementById("emailTemplateEditor");
+      if (!ed) return;
+      const v = ta && ta.value.trim() ? ta.value : "";
+      ed.value = v;
+    }
+
+    function updateIrPreview(reportText, ruleName) {
+      const iframe = document.getElementById("irTemplateFrame");
+      const ta = document.getElementById("irHtmlSource");
+      if (!iframe) return;
+      try {
+        const built = buildIrPreviewHtml(reportText, ruleName);
+        iframe.srcdoc = built;
+        if (ta) ta.value = built;
+        syncIrOverlayFromAnalysis(reportText);
+        refreshIrOverlayPreviews();
+        syncIrToEmail();
+      } catch (e) {
+        console.error(e);
+        iframe.srcdoc = "<body style=\"margin:0;padding:16px;font-family:Arial,sans-serif;background:#f4f4f4;color:#334155\">IR preview could not be built.</body>";
+        if (ta) ta.value = "";
+        syncIrToEmail();
+      }
+    }
+
+    function applyIrPreviewFromEditor() {
+      closeIrFieldModal();
+      const iframe = document.getElementById("irTemplateFrame");
+      const ta = document.getElementById("irHtmlSource");
+      if (!iframe || !ta) return;
+      const html = injectIrOverlayFields(ta.value);
+      iframe.srcdoc = html;
+      ta.value = html;
+      syncIrToEmail();
+    }
+
+    function reloadIrFromAnalysis() {
+      if (!lastAnalysisReport) return alert("Run analysis first.");
+      updateIrPreview(lastAnalysisReport, lastSelectedRule);
+    }
+
+    function setReportView(view) {
+      currentReportView = view;
+      document.querySelectorAll(".seg-btn").forEach(btn => {
+        const on = btn.dataset.view === view;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      const pa = document.getElementById("reportPanelAnalysis");
+      const pir = document.getElementById("reportPanelIr");
+      const pem = document.getElementById("reportPanelEmail");
+      if (pa) pa.classList.toggle("is-visible", view === "analysis");
+      if (pir) pir.classList.toggle("is-visible", view === "ir");
+      if (pem) pem.classList.toggle("is-visible", view === "email");
+      if (view === "email") {
+        pullIframeToTextarea();
+        syncIrToEmail();
+      }
+    }
+
+    function applyEmailTemplateMerge() {
+      if (!lastAnalysisReport) return alert("Run analysis first.");
+      updateIrPreview(lastAnalysisReport, lastSelectedRule);
+    }
+
+    function saveEmailTemplateDraft() {
+      const ed = document.getElementById("emailTemplateEditor");
+      if (!ed) return;
+      localStorage.setItem(EMAIL_TEMPLATE_STORAGE_KEY, ed.value);
+      alert("Email template saved locally.");
+    }
+
+    function loadEmailTemplateOnInit() {
+      const ed = document.getElementById("emailTemplateEditor");
+      if (!ed) return;
+      const saved = localStorage.getItem(EMAIL_TEMPLATE_STORAGE_KEY);
+      ed.value = saved || DEFAULT_EMAIL_TEMPLATE;
+      const irTa = document.getElementById("irHtmlSource");
+      if (irTa) irTa.addEventListener("input", syncIrToEmail);
+    }
+
     async function runSOCEngine() {
       const logs = document.getElementById('rawLogs').value.trim();
       const aiKey = document.getElementById('aiKey').value.trim();
@@ -1449,21 +2375,27 @@ ${question}
   Greeting: Hello ${cust},
   Alert Title: We have received an alert titled “${rule}.” 
 
-  Format:
+  Format (use EXACTLY these labels and order; each value on the line after the colon):
+
   Details:
+  (Optional: one short line of extra factual context ONLY if needed—otherwise leave blank or write "—". Do NOT repeat Event Time / Host / User here; those go only in the labeled lines below.)
+
   Event Time: [Extract] (Convert any UTC time ending with 'Z' into India time UTC+05:30 and display in that timezone.)
   Host Name: [Extract]
   User: [Extract]
-  (Extract other technical details like Process, Path, etc.)
+  Source IP: [Extract from log — include interface or scope if needed]
+  Event IDs: [Relevant Windows/security event IDs and short descriptions, if present]
+  Authentication Result: [Success/failure, status codes, logon types if applicable]
+  Logon Process: [e.g. Kerberos, NTLM, or as shown in log]
 
   Observation:
-  (Write a short, simple observation in readable SOC language (2-4 sentences). Reference the key evidence from the RAW Log—what happened, to whom/where, and when. Keep it straightforward and avoid long explanations.)
+  (2–4 sentences in plain SOC language: what the activity means and why it matters. Do NOT repeat the same labeled facts already listed under Details—refer to them indirectly (e.g. "the account on the host above") instead of re-listing Host Name, User, Event Time, or IPs.)
 
   Impact:
-  (Security risk assessment)
+  (Security risk assessment only—no duplicated lists of IPs, users, or hosts.)
 
   Recommended Actions:
-  (Provide 3-6 simple, human actions to take next. Make each action directly reference the relevant evidence from the RAW Log (host/user/time/src IP/failed reason, etc.). Keep it short and do not add extra commentary.)
+  (3–6 numbered or short actionable steps. Do NOT copy-paste the Details block; refer to entities briefly by name. Each step should be a new action, not a restatement of facts.)
 
   RAW Log:
   ${approvedMaskedLogs}
@@ -1475,7 +2407,8 @@ ${question}
   ${analyst}
 
   RULES: DO NOT USE BOLD MARKDOWN (**) IN THE RESPONSE. DO NOT ADD HEADINGS LIKE "Raw Log Analysis". DO NOT USE THE WORD "Investigate". 
-  Use the RAW Log section above for your analysis.`;
+  Use the RAW Log section above for your analysis.
+  Keep sections strictly separate: all factual labels (Event Time through Logon Process) are the single source of truth for those facts; Observation and Recommended Actions must not duplicate those lines.`;
 
       try {
         let response;
@@ -1515,6 +2448,9 @@ ${question}
         lastMaskedLogs = approvedMaskedLogs;
         lastSelectedRule = rule;
 
+        setReportView("analysis");
+        updateIrPreview(finalReport, rule);
+
         document.getElementById("socbotWindow").style.display = "block";
         document.getElementById("socbotChat").innerHTML = "";
         addAgentMsg("Analysis completed. Ask your SOC questions now.");
@@ -1542,23 +2478,57 @@ ${question}
       lastMaskedLogs = "";
       lastSelectedRule = "";
 
+      setReportView("analysis");
+      const irf = document.getElementById("irTemplateFrame");
+      if (irf) irf.srcdoc = "";
+      const irTa = document.getElementById("irHtmlSource");
+      if (irTa) irTa.value = "";
+      const emEd = document.getElementById("emailTemplateEditor");
+      if (emEd) emEd.value = "";
+      irOverlayFields = { ticket: "", severity: "", details: "", observation: "", recommendation: "" };
+      irModalActiveField = null;
+      closeIrFieldModal();
+      refreshIrOverlayPreviews();
+
       bootBotUI();
     }
 
     function copyReport() {
-      const reportContent = document.getElementById('reportContent');
+      const view = currentReportView || "analysis";
+      let payload = "";
+      if (view === "analysis") {
+        payload = document.getElementById("reportContent").innerText;
+      } else if (view === "ir") {
+        const taIr = document.getElementById("irHtmlSource");
+        if (taIr && taIr.value.trim()) {
+          payload = taIr.value;
+        } else {
+          const iframe = document.getElementById("irTemplateFrame");
+          try {
+            const idoc = iframe.contentDocument || iframe.contentWindow.document;
+            payload = idoc.documentElement ? idoc.documentElement.outerHTML : (iframe.srcdoc || "");
+          } catch (e) {
+            payload = iframe.srcdoc || "";
+          }
+        }
+      } else {
+        payload = document.getElementById("emailTemplateEditor").value;
+      }
+
       const textArea = document.createElement("textarea");
-      textArea.value = reportContent.innerText;
+      textArea.value = payload;
       document.body.appendChild(textArea);
       textArea.select();
       try {
-        document.execCommand('copy');
+        document.execCommand("copy");
         alert("Copied to clipboard!");
       } catch (err) {
-        console.error('Copy failed', err);
+        console.error("Copy failed", err);
       }
       document.body.removeChild(textArea);
     }
+
+    refreshIrOverlayPreviews();
   </script>
 </body>
 
