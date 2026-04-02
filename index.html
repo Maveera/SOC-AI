@@ -1198,6 +1198,7 @@ ${question}
     function maskLogs(text) {
       piiStore.clear();
       let masked = text;
+      let xmlKvIndex = 0;
 
       // 1. MAC Addresses
       const macs = [...new Set(text.match(/(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})/g) || [])];
@@ -1207,13 +1208,55 @@ ${question}
       const emails = [...new Set(text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [])];
       emails.forEach((email, i) => { const key = `[[MASKED_EMAIL_${i}]]`; piiStore.set(key, email); masked = masked.split(email).join(key); });
 
-      // 3. IPs (Keeping public & private for masking)
-      const ips = [...new Set(text.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g) || [])];
+      // 3. IPv4s (Keeping public & private for masking)
+      const ipv4Regex = /\b(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\b/g;
+      const ips = [...new Set(text.match(ipv4Regex) || [])];
       ips.forEach((ip, i) => { const key = `[[MASKED_IP_${i}]]`; piiStore.set(key, ip); masked = masked.split(ip).join(key); });
+
+      // 3.1 IPv6s
+      const ipv6Regex = /\b(?:[0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{1,4}\b/g;
+      const ipv6s = [...new Set(text.match(ipv6Regex) || [])];
+      ipv6s.forEach((ip, i) => { const key = `[[MASKED_IPv6_${i}]]`; piiStore.set(key, ip); masked = masked.split(ip).join(key); });
 
       // 3.5 UUIDs / GUIDs
       const guids = [...new Set(text.match(/\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/gi) || [])];
       guids.forEach((guid, i) => { const key = `[[MASKED_GUID_${i}]]`; piiStore.set(key, guid); masked = masked.split(guid).join(key); });
+
+      // 3.6 URLs / URIs (mask before key-value parsing)
+      const urls = [...new Set(text.match(/\bhttps?:\/\/[^\s"']+/gi) || [])];
+      urls.forEach((url, i) => { const key = `[[MASKED_URL_${i}]]`; piiStore.set(key, url); masked = masked.split(url).join(key); });
+
+      // 3.7 Hostnames / FQDNs
+      const hostnames = [...new Set(text.match(/\b(?:[a-zA-Z0-9-]+\.)+(?:[a-zA-Z]{2,})\b/g) || [])];
+      hostnames.forEach((h, i) => { const key = `[[MASKED_HOST_${i}]]`; piiStore.set(key, h); masked = masked.split(h).join(key); });
+
+      // 3.8 File paths (Windows + Unix)
+      const windowsPaths = [...new Set(text.match(/\b[A-Za-z]:\\[^\s"']+/g) || [])];
+      windowsPaths.forEach((p, i) => { const key = `[[MASKED_PATH_WIN_${i}]]`; piiStore.set(key, p); masked = masked.split(p).join(key); });
+      const unixPaths = [...new Set(text.match(/\b\/(?:[^\s"']+\/)*[^\s"']+/g) || [])];
+      unixPaths.forEach((p, i) => { const key = `[[MASKED_PATH_${i}]]`; piiStore.set(key, p); masked = masked.split(p).join(key); });
+
+      // 3.9 Common tokens/secrets
+      const bearerTokens = [...new Set([...text.matchAll(/\bBearer\s+([A-Za-z0-9\-_.=]{10,})\b/gi)].map(m => m[1]))];
+      bearerTokens.forEach((t, i) => { const key = `[[MASKED_BEARER_${i}]]`; piiStore.set(key, t); masked = masked.split(t).join(key); });
+
+      const secretTokens = [...new Set([...text.matchAll(/\b(?:api[_-]?key|apikey|access[_-]?token|refresh[_-]?token|client[_-]?secret|secret|password|passwd|pwd|auth[_-]?token|authorization|token)\b\s*[:=]\s*["']?([^\s"';,]{4,})/gi)].map(m => m[1]))];
+      secretTokens.forEach((t, i) => { const key = `[[MASKED_SECRET_${i}]]`; piiStore.set(key, t); masked = masked.split(t).join(key); });
+
+      // 3.10 Cookies / Set-Cookie
+      const cookieStrings = [...new Set(text.match(/\b(?:Cookie|Set-Cookie)\s*[:=]\s*[^;\r\n]+/gi) || [])];
+      cookieStrings.forEach((c, i) => { const key = `[[MASKED_COOKIE_${i}]]`; piiStore.set(key, c); masked = masked.split(c).join(key); });
+
+      // 3.11 XML <Data Name='TargetUserName'>VALUE</Data> (Windows Event style)
+      const xmlTargetUserNameRegex = /(<Data\s+Name=['"]TargetUserName['"]\s*>\s*)([^<]+?)(\s*<\/Data>)/gi;
+      masked = masked.replace(xmlTargetUserNameRegex, (full, prefix, val, suffix) => {
+        const value = (val || '').trim();
+        if (!value || value.includes('[[MASKED') || value.includes('MASKED_') || value.length < 3) return full;
+        const existingKey = [...piiStore.entries()].find(([k, v]) => v === value)?.[0];
+        const key = existingKey || `[[MASKED_TARGET_USERNAME_${xmlKvIndex++}]]`;
+        if (!existingKey) piiStore.set(key, value);
+        return `${prefix}${key}${suffix}`;
+      });
 
       // 3.6 Explicit Organizational/Infrastructure Keywords & Naming Conventions
       // Looks for specific customer domains/names (Apraava), Windows environments, common metrics, and server naming conventions
@@ -1227,17 +1270,21 @@ ${question}
       const sensitiveKeys = [
         'host', 'hostname', 'device', 'devicename', 'devname', 'devid', 'vd', 'vwlname', 'vwlquality', 'vwlid',
         'user', 'username', 'xauthuser', 'dstuser', 'useralt', 'xauthgroup', 'account', 'domain',
+        'samaccountname', 'upn', 'subjectusername', 'subjectuser', 'accountname', 'computername', 'workstation',
+        'targetusername', 'targetuser', 'targetaccount', 'targetdomainname',
         'src', 'dst', 'src_ip', 'dst_ip', 'dhost', 'shost', 'remip', 'locip', 'transip', 'assignip',
         'srcport', 'dstport', 'remport', 'locport', 'transport', 'srcintf', 'dstintf', 'outintf', 'srcintfrole', 'dstintfrole',
         'server', 'servername', 'machineguid', 'org', 'organization', 'company', 'tenant', 'clientname',
-        'sessionid', 'cookies', 'proto', 'action', 'policyid', 'policytype', 'poluuid', 'policyname',
+        'sessionid', 'cookies', 'cookie', 'authorization', 'auth', 'bearer', 'api_key', 'apikey', 'access_token', 'refresh_token', 'token', 'secret', 'password', 'passwd', 'pwd', 'proto', 'action', 'policyid', 'policytype', 'poluuid', 'policyname',
         'vpntunnel', 'phase2_name', 'fctuid', 'advpnsc',
         'service', 'trandisp', 'app', 'appid', 'appcat', 'apprisk', 'applist',
+        'path', 'filepath', 'process', 'processname', 'processpath', 'cmdline', 'commandline', 'image', 'file', 'filename', 'directory', 'dir', 'uri', 'url', 'requesturl', 'request', 'useragent', 'user_agent',
         'duration', 'sentbyte', 'rcvdbyte', 'sentpkt', 'rcvdpkt', 'sentdelta', 'rcvddelta', 'durationdelta', 'sentpktdelta', 'rcvdpktdelta',
         'type', 'subtype', 'level', 'logid', 'tz', 'logdesc', 'msg'
       ].join('|');
 
-      const keyValueRegex = new RegExp(`\\[?(?:${sensitiveKeys})\\]?[\\s]*[:=][\\s]*["']?([a-zA-Z0-9.\\-_@: ]+?)["']?(?:[\\s,\\]]|$)`, 'gi');
+      // Allow common log value characters (paths with / and \, tokens with =, and query fragments)
+      const keyValueRegex = new RegExp(`\\[?(?:${sensitiveKeys})\\]?[\\s]*[:=][\\s]*["']?([a-zA-Z0-9.\\-_@: \\/\\\\+=?&%]+?)["']?(?:[\\s,\\]]|$)`, 'gi');
       let match;
       let kvIndex = 0;
 
@@ -1249,7 +1296,7 @@ ${question}
         const val = m[1];       // e.g. 'server01'
 
         // Skip if already masked, too short, or a common generic word
-        if (!val || val.includes('[[MASKED') || val.length < 3) continue;
+        if (!val || val.includes('[[MASKED') || val.includes('MASKED_') || val.length < 3) continue;
 
         // Check if val is already in store to reuse the key
         let existingKey = [...piiStore.entries()].find(([k, v]) => v === val)?.[0];
@@ -1296,6 +1343,59 @@ ${question}
         output = output.replace(regex, val);
       });
       return output;
+    }
+
+    // Convert ISO UTC timestamps ending with 'Z' into 'UTC+05:30' (IST) strings.
+    // Example: 2026-04-02T06:52:31.458924800Z -> 2026-04-02T12:22:31.458+05:30
+    function convertUtcTimestampsTo0530(text) {
+      const offsetMinutes = 5 * 60 + 30; // UTC+05:30
+      const offsetMs = offsetMinutes * 60 * 1000;
+
+      return text.replace(
+        /(['"])(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?Z\1/g,
+        (full, quote, y, mo, d, hh, mm, ss, frac) => {
+          // Use first 3 fractional digits as milliseconds (JS Date supports ms precision)
+          const msStr = (frac ? frac : "000").padEnd(3, "0").slice(0, 3);
+          const utcMs = Date.UTC(
+            Number(y),
+            Number(mo) - 1,
+            Number(d),
+            Number(hh),
+            Number(mm),
+            Number(ss),
+            Number(msStr)
+          );
+
+          const ist = new Date(utcMs + offsetMs);
+          const y2 = ist.getUTCFullYear();
+          const mo2 = String(ist.getUTCMonth() + 1).padStart(2, '0');
+          const d2 = String(ist.getUTCDate()).padStart(2, '0');
+          const hh2 = String(ist.getUTCHours()).padStart(2, '0');
+          const mm2 = String(ist.getUTCMinutes()).padStart(2, '0');
+          const ss2 = String(ist.getUTCSeconds()).padStart(2, '0');
+          const ms2 = String(ist.getUTCMilliseconds()).padStart(3, '0');
+
+          return `${quote}${y2}-${mo2}-${d2}T${hh2}:${mm2}:${ss2}.${ms2}+05:30${quote}`;
+        }
+      );
+    }
+
+    // Convert UTC timestamps to UTC+05:30 in the AI output,
+    // but do NOT modify the RAW Log dump inside the report.
+    function convertOutputTimestampsAfterRecommendedActions(reportText) {
+      // Preserve RAW Log section verbatim (timestamps remain unchanged there),
+      // but convert all other timestamps in the report to UTC+05:30.
+      const rawIdx = reportText.search(/RAW Log\s*:/i);
+      const clsIdx = reportText.search(/Classification\s*:/i);
+      if (rawIdx === -1 || clsIdx === -1 || clsIdx <= rawIdx) {
+        return convertUtcTimestampsTo0530(reportText);
+      }
+
+      const beforeRaw = reportText.slice(0, rawIdx);
+      const rawBlock = reportText.slice(rawIdx, clsIdx);
+      const afterRaw = reportText.slice(clsIdx);
+
+      return convertUtcTimestampsTo0530(beforeRaw) + rawBlock + convertUtcTimestampsTo0530(afterRaw);
     }
 
     async function runSOCEngine() {
@@ -1351,18 +1451,19 @@ ${question}
 
   Format:
   Details:
+  Event Time: [Extract] (Convert any UTC time ending with 'Z' into India time UTC+05:30 and display in that timezone.)
   Host Name: [Extract]
   User: [Extract]
   (Extract other technical details like Process, Path, etc.)
 
   Observation:
-  (Simple, technical paragraph explaining findings from logs.)
+  (Write a short, simple observation in readable SOC language (2-4 sentences). Reference the key evidence from the RAW Log—what happened, to whom/where, and when. Keep it straightforward and avoid long explanations.)
 
   Impact:
   (Security risk assessment)
 
   Recommended Actions:
-  (List actionable remediation steps)
+  (Provide 3-6 simple, human actions to take next. Make each action directly reference the relevant evidence from the RAW Log (host/user/time/src IP/failed reason, etc.). Keep it short and do not add extra commentary.)
 
   RAW Log:
   ${approvedMaskedLogs}
@@ -1373,7 +1474,7 @@ ${question}
   SOC Team
   ${analyst}
 
-  RULES: DO NOT USE BOLD MARKDOWN (**) IN THE RESPONSE. DO NOT ADD HEADINGS LIKE "Raw Log Analysis". 
+  RULES: DO NOT USE BOLD MARKDOWN (**) IN THE RESPONSE. DO NOT ADD HEADINGS LIKE "Raw Log Analysis". DO NOT USE THE WORD "Investigate". 
   Use the RAW Log section above for your analysis.`;
 
       try {
@@ -1403,7 +1504,9 @@ ${question}
           result = data.choices?.[0]?.message?.content || "No content.";
         }
 
-        const finalReport = unmaskReport(result);
+        let finalReport = unmaskReport(result);
+        // Convert time in the generated report output while keeping RAW Log unchanged.
+        finalReport = convertOutputTimestampsAfterRecommendedActions(finalReport);
 
         document.getElementById('reportContent').innerText = finalReport;
         document.getElementById('reportSection').style.display = 'block';
